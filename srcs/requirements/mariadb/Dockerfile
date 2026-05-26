@@ -5,7 +5,7 @@ RUN apt-get update && \
 	rm -fr /var/lib/apt/lists/*
 
 RUN mkdir -p /var/run/mysqld && \
-	chown -R mysql::mysql /var/run/mysqld && \
+	chown -R mysql:mysql /var/run/mysqld && \
 	chmod 755 /var/run/mysqld
 
 COPY conf/50-server.cnf /etc/mysql/mariadb.conf.d/
