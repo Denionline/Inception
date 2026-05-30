@@ -2,6 +2,7 @@
 #                                    Names                                     #
 # **************************************************************************** #
 
+
 # **************************************************************************** #
 #                                    Path's                                    #
 # **************************************************************************** #
@@ -21,12 +22,14 @@ RM					= rm -rf
 #                                    Comands                                   #
 # **************************************************************************** #
 
-all: $(NAME)
+all:
+	@docker build -t mariadb_img srcs/requirements/mariadb
+	@docker run -d --name mariadb -p 3306:3306 mariadb_img
+	@printf "Mariadb started successfully!\n"
 
 clean:
-	@$(RM) $(BUILD_PATH)
+	@docker stop mariadb && docker rm mariadb && docker rmi mariadb_img
 
 fclean: clean
-	@$(RM) $(NAME)
 
 re: fclean all

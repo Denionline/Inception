@@ -17,7 +17,7 @@ RUN chmod +x /usr/local/bin/init_db.sh
 ENV MYSQL_ROOT_PASSWORD=root \
 	MYSQL_DATABASE=app_db \
 	MYSQL_USER=app_user \
-	MYSQL_PASSWORD=app_pass
+	MYSQL_PASSWORD=pass
 
 EXPOSE 3306
 
