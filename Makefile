@@ -7,9 +7,13 @@
 #                                    Path's                                    #
 # **************************************************************************** #
 
+DATA_PATH				= /home/$(USER)/data
+
 # **************************************************************************** #
 #                                    Files                                     #
 # **************************************************************************** #
+
+COMPOSE_FILE			= srcs/docker-compose.yml
 
 # **************************************************************************** #
 #                                  Compiler                                    #
@@ -22,14 +26,34 @@ RM					= rm -rf
 #                                    Comands                                   #
 # **************************************************************************** #
 
-all:
-	@docker build -t mariadb_img srcs/requirements/mariadb
-	@docker run -d --name mariadb -p 3306:3306 mariadb_img
-	@printf "Mariadb started successfully!\n"
+.PHONY: all build up down clean fclean re
+
+all: build up
+
+$(DATA_PATH)/mariadb:
+	mkdir -p $(DATA_PATH)/mariadb
+
+$(DATA_PATH)/wordpress:
+	mkdir -p $(DATA_PATH)/wordpress
+
+build: $(DATA_PATH)/mariadb $(DATA_PATH)/wordpress
+	docker compose -f $(COMPOSE_FILE) build
+
+up:
+	docker compose -f $(COMPOSE_FILE) up
+
+down:
+	docker compose -f $(COMPOSE_FILE) down
 
 clean:
-	@docker stop mariadb && docker rm mariadb && docker rmi mariadb_img
+	docker compose -f $(COMPOSE_FILE) down
+	docker system prune -af
 
 fclean: clean
+	docker volume prune -f
+	sudo rm -rf $(DATA_PATH)
 
 re: fclean all
+
+sh_maria:
+	docker compose exec -it mariadb bash
