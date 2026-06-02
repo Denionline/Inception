@@ -52,6 +52,9 @@ services:
       - wordpress_data:/var/www/html
     environment:
       DOMAIN_NAME: ${DOMAIN_NAME}
+    ports:
+      - "80:80"
+      - "443:443"
     restart: always
 
 networks:
