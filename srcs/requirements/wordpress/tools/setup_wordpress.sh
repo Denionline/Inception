@@ -14,6 +14,7 @@ echo "Setting up WordPress..."
 # Download and configure WordPress if not present
 if [ ! -f "$WP_PATH/wp-config.php" ]; then
 	echo "Downloading WordPress..."
+
 	wget -q https://wordpress.org/latest.tar.gz -O /tmp/wordpress.tar.gz
 	tar -xzf /tmp/wordpress.tar.gz -C /tmp
 	rm /tmp/wordpress.tar.gz
@@ -22,35 +23,43 @@ if [ ! -f "$WP_PATH/wp-config.php" ]; then
 	cp -rn /tmp/wordpress/* "$WP_PATH" || true
 	rm -rf /tmp/wordpress
 
-	# Fetch security salts from WordPress API
-	WP_SALTS=$(wget -qO- https://api.wordpress.org/secret-key/1.1/salt/)
+	if [ ! -f wp-cli.phar ]; then
+		curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+		chmod +x wp-cli.phar
+	fi
 
-	# Create wp-config.php
-	cat > "$WP_PATH/wp-config.php" << EOF
-<?php
-define('DB_NAME', '${WORDPRESS_DB_NAME}');
-define('DB_USER', '${WORDPRESS_DB_USER}');
-define('DB_PASSWORD', '${WORDPRESS_DB_PASSWORD}');
-define('DB_HOST', '${WORDPRESS_DB_HOST}');
-define('DB_CHARSET', 'utf8');
-define('DB_COLLATE', '');
+	WP="./wp-cli.phar"
 
-\$table_prefix = '${WORDPRESS_TABLE_PREFIX:-wp_}';
+	if [ ! -f wp-config-sample.php ]; then
+		$WP core download --allow-root
+	fi
 
-${WP_SALTS}
+	if [ ! -f wp-config.php ]; then
+		$WP config create \
+			--dbname="$WORDPRESS_DB_NAME" \
+			--dbuser="$WORDPRESS_DB_USER" \
+			--dbpass="$WORDPRESS_DB_PASSWORD" \
+			--dbhost="$WORDPRESS_DB_HOST" \
+			--allow-root
+	fi
 
-define('WP_DEBUG', false);
+	if ! $WP core is-installed --allow-root >/dev/null 2>&1; then
+		$WP core install \
+			--url="$DOMAIN_NAME" \
+			--title="$WP_TITLE" \
+			--admin_user="$WP_ADMIN_USER" \
+			--admin_password="$WP_ADMIN_PASSWORD" \
+			--admin_email="$WP_ADMIN_EMAIL" \
+			--allow-root \
+			--skip-email
+	fi
 
-if ( !defined('ABSPATH') )
-	define('ABSPATH', __DIR__ . '/');
-
-require_once ABSPATH . 'wp-settings.php';
-EOF
-
-	# Set secure permissions
-	find "$WP_PATH" -type d -exec chmod 750 {} \;
-	find "$WP_PATH" -type f -exec chmod 640 {} \;
-	chown -R www-data:www-data "$WP_PATH"
+	if ! $WP user get "$WP_GUEST_USER" --allow-root >/dev/null 2>&1; then
+		$WP user create "$WP_GUEST_USER" "$WP_GUEST_EMAIL" \
+			--role=subscriber\
+			--user_pass="$WP_GUEST_PASSWORD" \
+			--allow-root
+	fi
 
 	echo "WordPress setup complete."
 else
