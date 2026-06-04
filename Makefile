@@ -7,7 +7,7 @@
 #                                    Path's                                    #
 # **************************************************************************** #
 
-DATA_PATH				= /home/$(USER)/data
+DATA_PATH				= /home/$(USER)/docker-data
 
 # **************************************************************************** #
 #                                    Files                                     #
@@ -49,11 +49,10 @@ clean:
 	docker compose -f $(COMPOSE_FILE) down
 	docker system prune -af
 
-fclean: clean
+re: clean all
+
+vclean: clean
 	docker volume prune -f
 	sudo rm -rf $(DATA_PATH)
 
-re: fclean all
-
-sh_maria:
-	docker compose exec -it mariadb bash
+vre: vclean all

@@ -61,6 +61,17 @@ if [ ! -f "$WP_PATH/wp-config.php" ]; then
 			--allow-root
 	fi
 
+	HOME_ID=$( $WP post create \
+		--post_type=page \
+		--post_title="Well come" \
+		--post_status=publish \
+		--post_content="$(cat /tmp/homepage.html)" \
+		--porcelain \
+		--allow-root)
+
+	$WP option update show_on_front page --allow-root
+	$WP option update page_on_front "$HOME_ID" --allow-root
+
 	echo "WordPress setup complete."
 else
 	echo "WordPress already initialized, skipping setup."
