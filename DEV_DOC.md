@@ -30,8 +30,7 @@ The project expects the following files and folders:
 From the repository root:
 
 ```bash
-make build
-make up
+make
 ```
 
 The `Makefile` creates the host directories required for persistent data and then builds the service images using the Compose file.
@@ -55,7 +54,7 @@ make vre
 
 ## Data persistence
 
-The project stores persistent data in Docker named volumes backed by the host path `/home/$USER/docker-data`.
+The project stores persistent data in Docker named volumes backed by the host path `/home/$USER/data`.
 
 - MariaDB data is stored in the database volume.
 - WordPress website files are stored in the website volume.

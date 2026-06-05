@@ -12,11 +12,10 @@ The stack provides three services:
 
 ## Start and stop the project
 
-Start the stack from the repository root:
+Start the stack from the repository root running it:
 
 ```bash
-make build
-make up
+make
 ```
 
 Stop it with:
@@ -31,6 +30,12 @@ If you need a full cleanup, use:
 make clean
 ```
 
+If you need to restart, use:
+
+```bash
+make re
+```
+
 ## Access the website and administration panel
 
 - Open `https://dximenes.42.fr` in your browser.
@@ -41,7 +46,6 @@ make clean
 
 - Runtime configuration values are stored in `srcs/.env`.
 - Database passwords are stored in the `secrets/` directory.
-- Do not place passwords directly in Dockerfiles.
 
 ## Check that the services are running correctly
 
@@ -50,7 +54,6 @@ You can verify the stack by checking that:
 - `docker compose -f srcs/docker-compose.yml ps` shows all services running.
 - `https://dximenes.42.fr` opens successfully in the browser.
 - WordPress loads and the administration panel accepts the configured admin credentials.
-- MariaDB is reachable internally from the WordPress container.
 
 ## Notes for administrators
 
