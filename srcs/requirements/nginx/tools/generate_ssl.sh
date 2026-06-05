@@ -1,15 +1,12 @@
 #!/bin/bash
 set -e
 
-# Ensure SSL directory exists
 mkdir -p /etc/nginx/ssl
 
-# Default domain if not provided
 : "${DOMAIN_NAME:=localhost}"
 
 echo "Starting nginx with ${DOMAIN_NAME}"
 
-# Generate SSL certificate if it doesn't exist
 if [ ! -f /etc/nginx/ssl/nginx.crt ]; then
 	echo "Generating self-signed SSL certificate for ${DOMAIN_NAME}..."
 
@@ -26,11 +23,9 @@ else
 	echo "SSL certificate already exists. Skipping generation."
 fi
 
-# Test nginx configuration before starting
 echo "Testing nginx configuration..."
 nginx -t
 echo "Nginx configuration test passed."
 
-# Start nginx in foreground (PID 1)
 echo "Starting Nginx..."
 exec nginx -g "daemon off;"

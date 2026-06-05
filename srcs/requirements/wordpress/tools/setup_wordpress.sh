@@ -3,7 +3,6 @@ set -e
 
 WP_PATH="/var/www/html"
 
-# Read password from secret file
 if [ -n "$WORDPRESS_DB_PASSWORD_FILE" ] && [ -f "$WORDPRESS_DB_PASSWORD_FILE" ]; then
 	WORDPRESS_DB_PASSWORD=$(cat "$WORDPRESS_DB_PASSWORD_FILE")
 	export WORDPRESS_DB_PASSWORD
@@ -11,7 +10,6 @@ fi
 
 echo "Setting up WordPress..."
 
-# Download and configure WordPress if not present
 if [ ! -f "$WP_PATH/wp-config.php" ]; then
 	echo "Downloading WordPress..."
 
@@ -19,7 +17,6 @@ if [ ! -f "$WP_PATH/wp-config.php" ]; then
 	tar -xzf /tmp/wordpress.tar.gz -C /tmp
 	rm /tmp/wordpress.tar.gz
 
-	# Copy only missing files (avoid overwriting existing content)
 	cp -rn /tmp/wordpress/* "$WP_PATH" || true
 	rm -rf /tmp/wordpress
 
