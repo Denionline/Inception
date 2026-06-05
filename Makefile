@@ -33,10 +33,10 @@ RM					= rm -rf
 all: build up
 
 $(MARIADB_PATH):
-	mkdir -p $(MARIADB_PATH)/_data
+	sudo mkdir -p $(MARIADB_PATH)/_data
 
 $(WORDPRESS_PATH):
-	mkdir -p $(WORDPRESS_PATH)/_data
+	sudo mkdir -p $(WORDPRESS_PATH)/_data
 
 build: $(MARIADB_PATH) $(WORDPRESS_PATH)
 	docker compose -f $(COMPOSE_FILE) build
