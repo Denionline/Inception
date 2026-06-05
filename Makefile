@@ -7,7 +7,9 @@
 #                                    Path's                                    #
 # **************************************************************************** #
 
-DATA_PATH				= /home/$(USER)/data
+DATA_PATH				= /home/$(USER)/data/volumes
+MARIADB_PATH			= $(DATA_PATH)/srcs_mariadb_data
+WORDPRESS_PATH			= $(DATA_PATH)/srcs_wordpress_data
 
 # **************************************************************************** #
 #                                    Files                                     #
@@ -30,13 +32,13 @@ RM					= rm -rf
 
 all: build up
 
-$(DATA_PATH)/mariadb:
-	mkdir -p $(DATA_PATH)/mariadb
+$(MARIADB_PATH):
+	mkdir -p $(MARIADB_PATH)/_data
 
-$(DATA_PATH)/wordpress:
-	mkdir -p $(DATA_PATH)/wordpress
+$(WORDPRESS_PATH):
+	mkdir -p $(WORDPRESS_PATH)/_data
 
-build: $(DATA_PATH)/mariadb $(DATA_PATH)/wordpress
+build: $(MARIADB_PATH) $(WORDPRESS_PATH)
 	docker compose -f $(COMPOSE_FILE) build
 
 up:
@@ -53,6 +55,6 @@ re: clean all
 
 vclean: clean
 	docker volume prune -f
-	sudo rm -rf $(DATA_PATH)
+	sudo rm -fr $(MARIADB_PATH) $(WORDPRESS_PATH)
 
 vre: vclean all
